@@ -21,6 +21,18 @@
       height: 100%;
       object-fit: cover;
     }
+    .tab-button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+    }
+    .tab-button.active {
+      background-color: #4B5563;
+      color: white;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body class="flex flex-col h-screen">
@@ -36,14 +48,14 @@
   <main class="flex flex-1 overflow-hidden">
     <!-- Sidebar -->
     <aside id="closetTabs" class="w-48 bg-gray-100 p-4 space-y-2">
-      <button onclick="setClosetTab('New')">New</button>
-      <button onclick="setClosetTab('Hat')">Hat</button>
-      <button onclick="setClosetTab('Top')">Top</button>
-      <button onclick="setClosetTab('Bottom')">Bottom</button>
-      <button onclick="setClosetTab('Shoes')">Shoes</button>
-      <button onclick="setClosetTab('Outerwear')">Outerwear</button>
-      <button onclick="setClosetTab('Accessory')">Accessory</button>
-      <button onclick="setClosetTab('Stared')">Stared</button>
+      <button class="tab-button" onclick="setClosetTab('New')">New</button>
+      <button class="tab-button" onclick="setClosetTab('Hat')">Hat</button>
+      <button class="tab-button" onclick="setClosetTab('Top')">Top</button>
+      <button class="tab-button" onclick="setClosetTab('Bottom')">Bottom</button>
+      <button class="tab-button" onclick="setClosetTab('Shoes')">Shoes</button>
+      <button class="tab-button" onclick="setClosetTab('Outerwear')">Outerwear</button>
+      <button class="tab-button" onclick="setClosetTab('Accessory')">Accessory</button>
+      <button class="tab-button" onclick="setClosetTab('Stared')">Stared</button>
     </aside>
 
     <!-- Content Area -->
@@ -63,7 +75,19 @@
 
     function setClosetTab(tab) {
       currentClosetTab = tab;
+      updateActiveTab();
       renderCloset();
+    }
+
+    function updateActiveTab() {
+      const buttons = document.querySelectorAll('#closetTabs .tab-button');
+      buttons.forEach(button => {
+        if (button.textContent === currentClosetTab) {
+          button.classList.add('active');
+        } else {
+          button.classList.remove('active');
+        }
+      });
     }
 
     function toggleFavorite(id) {
@@ -127,6 +151,7 @@
     async function loadClosetData() {
       const response = await fetch('closet.json');
       closetData = await response.json();
+      updateActiveTab();
       renderCloset();
     }
 
