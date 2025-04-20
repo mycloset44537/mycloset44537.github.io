@@ -7,18 +7,18 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     .card {
-      width: 200px;
-      height: 200px;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      flex-direction: row;
       border: 1px solid #ccc;
       border-radius: 1rem;
       overflow: hidden;
+      width: 300px;
+      height: 200px;
+      background-color: white;
     }
     .card img {
-      width: 100%;
-      height: 100px;
+      width: 100px;
+      height: 100%;
       object-fit: cover;
     }
   </style>
@@ -47,7 +47,7 @@
     </aside>
 
     <!-- Content Area -->
-    <section id="contentArea" class="flex-1 p-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 overflow-y-auto">
+    <section id="contentArea" class="flex-1 p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto">
       <!-- Cards will be inserted here -->
     </section>
   </main>
@@ -92,25 +92,33 @@
 
       for (const item of filtered) {
         const card = document.createElement('div');
-        card.className = 'card bg-white shadow-md';
+        card.className = 'card shadow-md';
 
         const img = document.createElement('img');
         img.src = `images/${item.photo}/1.jpg`;
         card.appendChild(img);
 
         const details = document.createElement('div');
-        details.className = 'p-2';
-        details.innerHTML = `
-          <div class="font-bold">${item.name}</div>
-          <div>${item.material}</div>
-          <div>${item.fit}</div>
-          <div class="flex justify-between mt-2">
-            <button class="bg-green-200 rounded px-2">+</button>
-            <button onclick="toggleFavorite('${item.ID}')">
-              <span style="color: ${favorites.includes(item.ID) ? 'gold' : 'gray'}">★</span>
-            </button>
-          </div>
+        details.className = 'flex flex-col justify-between p-2 flex-1';
+
+        const info = document.createElement('div');
+        info.innerHTML = `
+          <div class="font-bold text-lg">${item.name}</div>
+          <div class="text-sm text-gray-600">${item.material}</div>
+          <div class="text-sm text-gray-600 mb-2">${item.fit}</div>
         `;
+
+        const buttons = document.createElement('div');
+        buttons.className = 'flex justify-between mt-auto';
+        buttons.innerHTML = `
+          <button class="bg-green-200 px-3 py-1 rounded">+</button>
+          <button onclick="toggleFavorite('${item.ID}')">
+            <span style="color: ${favorites.includes(item.ID) ? 'gold' : 'gray'}; font-size: 1.5rem;">★</span>
+          </button>
+        `;
+
+        details.appendChild(info);
+        details.appendChild(buttons);
         card.appendChild(details);
         container.appendChild(card);
       }
