@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Red Flannel Shirt",
+    "photo": "red-flannel",
+    "type": ["Top", "Outerwear"],
+    "material": "Cotton",
+    "pattern": "Plaid",
+    "color": "Red",
+    "brightness": "Dark",
+    "fit": "Relaxed",
+    "ID": "AA"
+  },
+  {
+    "name": "Blue Beanie",
+    "photo": "blue-beanie",
+    "type": ["Hat"],
+    "material": "Wool",
+    "pattern": "Solid",
+    "color": "Blue",
+    "brightness": "Medium",
+    "fit": "Snug",
+    "ID": "AB"
+  },
+  {
+    "name": "Black Jeans",
+    "photo": "black-jeans",
+    "type": ["Bottom"],
+    "material": "Denim",
+    "pattern": "Solid",
+    "color": "Black",
+    "brightness": "Dark",
+    "fit": "Slim",
+    "ID": "AC"
+  },
+  {
+    "name": "White Sneakers",
+    "photo": "white-sneakers",
+    "type": ["Shoes"],
+    "material": "Leather",
+    "pattern": "Solid",
+    "color": "White",
+    "brightness": "Bright",
+    "fit": "Regular",
+    "ID": "AD"
+  },
+  {
+    "name": "Denim Jacket",
+    "photo": "denim-jacket",
+    "type": ["Outerwear", "Top"],
+    "material": "Denim",
+    "pattern": "Solid",
+    "color": "Blue",
+    "brightness": "Medium",
+    "fit": "Oversized",
+    "ID": "AE"
+  }
+]
