@@ -12,9 +12,10 @@
       border: 1px solid #ccc;
       border-radius: 1rem;
       overflow: hidden;
-      width: 200px;
-      height: 200px;
+      width: 300px;
+      height: 300px;
       background-color: white;
+      position: absolute;
     }
     .card img {
       width: 100px;
@@ -32,6 +33,10 @@
       background-color: #4B5563;
       color: white;
       font-weight: bold;
+    }
+    #contentArea {
+      position: relative;
+      height: 100%;
     }
   </style>
 </head>
@@ -59,7 +64,7 @@
     </aside>
 
     <!-- Content Area -->
-    <section id="contentArea" class="flex-1 p-4 grid gap-4 overflow-y-auto" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <section id="contentArea" class="flex-1 p-4 overflow-y-auto relative">
       <!-- Cards will be inserted here -->
     </section>
   </main>
@@ -114,15 +119,29 @@
         filtered = closetData.filter(item => item.type.includes(currentClosetTab));
       }
 
-      for (const item of filtered) {
+      const cardWidth = 300;
+      const cardHeight = 300;
+      const xGap = cardWidth / 8;
+      const yGap = cardHeight / 8;
+      const containerWidth = container.offsetWidth;
+      const cardsPerRow = Math.floor(containerWidth / (cardWidth + xGap));
+
+      filtered.forEach((item, index) => {
+        const row = Math.floor(index / cardsPerRow);
+        const col = index % cardsPerRow;
+        const x = col * (cardWidth + xGap);
+        const y = row * (cardHeight + yGap);
+
         const card = document.createElement('div');
         card.className = 'card shadow-md';
+        card.style.left = `${x}px`;
+        card.style.top = `${y}px`;
 
         const img = document.createElement('img');
-        img.src = `images/${item.photo}/1.jpg`;
+        img.src = `images/images/${item.photo}/1.jpg`;
         img.onerror = () => {
           img.onerror = null;
-          img.src = `images/${item.photo}/1.png`;
+          img.src = `images/images/${item.photo}/1.png`;
         };
         card.appendChild(img);
 
@@ -149,7 +168,7 @@
         details.appendChild(buttons);
         card.appendChild(details);
         container.appendChild(card);
-      }
+      });
     }
 
     async function loadClosetData() {
@@ -159,6 +178,7 @@
       renderCloset();
     }
 
+    window.addEventListener('resize', renderCloset);
     loadClosetData();
   </script>
 </body>
