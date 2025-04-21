@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Outfit Page</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .card {
+      display: flex;
+      flex-direction: row;
+      border: 1px solid #ccc;
+      border-radius: 1rem;
+      overflow: hidden;
+      width: 200px;
+      height: 200px;
+      background-color: white;
+      position: relative;
+    }
+    .card.selected {
+      background-color: #d0eaff;
+    }
+    .card img {
+      width: 83px;
+      height: 100%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body class="flex flex-col h-screen">
+  <header class="bg-gray-800 text-white p-4">
+    <h1 class="text-xl font-bold">Outfit Builder</h1>
+  </header>
+
+  <main class="flex flex-1 overflow-hidden">
+    <section class="flex-1 p-4 flex">
+      <!-- Outfit Grid -->
+      <div class="grid grid-cols-3 grid-rows-4 gap-4">
+        <div id="accessorySlots"></div>
+        <div>
+          <div id="hatSlot"></div>
+          <div id="topSlot"></div>
+          <div id="bottomSlot"></div>
+          <div id="shoesSlot"></div>
+        </div>
+        <div id="outerwearSlots"></div>
+      </div>
+
+      <!-- Controls -->
+      <div class="ml-8 w-64 space-y-6">
+        <!-- Import Outfit -->
+        <div>
+          <label class="block text-sm font-bold mb-1">Import Outfit</label>
+          <div class="flex">
+            <input id="importCode" class="border rounded p-1 flex-1 mr-2" placeholder="Paste outfit code" />
+            <button class="bg-blue-500 text-white px-2 py-1 rounded" onclick="importOutfit()">Import</button>
+          </div>
+        </div>
+
+        <!-- Download Button -->
+        <div>
+          <button class="bg-green-500 text-white px-4 py-2 rounded w-full" onclick="downloadGrid()">Download Grid</button>
+        </div>
+
+        <!-- Outfit Code Display -->
+        <div>
+          <label class="block text-sm font-bold mb-1">Outfit Code</label>
+          <div class="flex items-center">
+            <input id="outfitCodeDisplay" class="border rounded p-1 flex-1 mr-2" readonly />
+            <button id="copyButton" class="text-gray-500" onclick="copyCode()">📋</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const slots = {
+      accessories: [null, null, null, null],
+      hat: null,
+      top: null,
+      bottom: null,
+      shoes: null,
+      outerwear: [null, null, null, null]
+    };
+
+    function importOutfit() {
+      const code = document.getElementById('importCode').value.trim();
+      if (!/^([A-Za-z0-9]{2}-){11}[A-Za-z0-9]{2}$/.test(code)) {
+        alert("Invalid outfit code.");
+        return;
+      }
+      const parts = code.split('_').map(group => group.split('-'));
+      slots.accessories = parts[0].map(id => id === '00' ? null : id);
+      [slots.hat, slots.top, slots.bottom, slots.shoes] = parts[1].map(id => id === '00' ? null : id);
+      slots.outerwear = parts[2].map(id => id === '00' ? null : id);
+      renderOutfit();
+    }
+
+    function copyCode() {
+      const code = document.getElementById('outfitCodeDisplay');
+      code.select();
+      document.execCommand('copy');
+      const btn = document.getElementById('copyButton');
+      btn.classList.add('text-green-500');
+      setTimeout(() => btn.classList.remove('text-green-500'), 1000);
+    }
+
+    function downloadGrid() {
+      alert('Download functionality will be implemented.');
+    }
+
+    function renderOutfit() {
+      const renderSlot = (slotId, item) => {
+        const slot = document.getElementById(slotId);
+        slot.innerHTML = '';
+        if (item) {
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `<img src="images/${item}/1.jpg" onerror="this.onerror=null;this.src='images/${item}/1.png';">
+                            <div class="p-2">${item}</div>`;
+          slot.appendChild(card);
+        }
+      };
+
+      document.getElementById('accessorySlots').innerHTML = '';
+      slots.accessories.forEach(item => renderSlot('accessorySlots', item));
+      renderSlot('hatSlot', slots.hat);
+      renderSlot('topSlot', slots.top);
+      renderSlot('bottomSlot', slots.bottom);
+      renderSlot('shoesSlot', slots.shoes);
+      document.getElementById('outerwearSlots').innerHTML = '';
+      slots.outerwear.forEach(item => renderSlot('outerwearSlots', item));
+
+      const outfitCode = [...slots.accessories, slots.hat, slots.top, slots.bottom, slots.shoes, ...slots.outerwear]
+        .map(id => id || '00')
+        .join('-')
+        .replace(/((?:[^-]+-){3}[^-]+)-((?:[^-]+-){3}[^-]+)-/, '$1_$2_');
+      document.getElementById('outfitCodeDisplay').value = outfitCode;
+    }
+
+    renderOutfit();
+  </script>
+</body>
+</html>
