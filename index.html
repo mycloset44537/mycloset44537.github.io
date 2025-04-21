@@ -18,7 +18,7 @@
       position: absolute;
     }
     .card img {
-      width: 100px;
+      width: 83px;
       height: 100%;
       object-fit: cover;
     }
@@ -44,6 +44,9 @@
       border-width: 25px;
       background-color: #F9FAFB;
     }
+    .card.selected {
+      background-color: #DBEAFE; /* light blue */
+    }
   </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
@@ -57,7 +60,6 @@
   </header>
 
   <main class="flex flex-1 overflow-hidden">
-    <!-- Sidebar -->
     <aside id="closetTabs" class="w-48 bg-gray-100 p-4 space-y-2">
       <button class="tab-button" onclick="setClosetTab('New')">New</button>
       <button class="tab-button" onclick="setClosetTab('Hat')">Hat</button>
@@ -69,9 +71,8 @@
       <button class="tab-button" onclick="setClosetTab('Favorite')">Favorite</button>
     </aside>
 
-    <!-- Content Area -->
     <section id="contentArea" class="flex-1 overflow-y-auto relative">
-      <!-- Cards will be inserted here -->
+      <!-- Cards inserted here -->
     </section>
   </main>
 
@@ -82,12 +83,12 @@
     let outfit = JSON.parse(localStorage.getItem('outfit')) || {};
 
     const MAX_ITEMS = {
-      "Accessory": 4,
-      "Hat": 1,
-      "Top": 1,
-      "Bottom": 1,
-      "Shoes": 1,
-      "Outerwear": 4
+      Accessory: 4,
+      Hat: 1,
+      Top: 1,
+      Bottom: 1,
+      Shoes: 1,
+      Outerwear: 4
     };
 
     function setMainTab(tab) {
@@ -118,8 +119,8 @@
       renderCloset();
     }
 
-    function toggleOutfitItem(id, typeStr) {
-      const item = closetData.find(i => i.ID === id);
+    function handleOutfitToggle(item) {
+      const id = item.ID;
       const types = item.type.split(',').map(t => t.trim());
 
       if (outfit[id]) {
@@ -165,15 +166,13 @@
         const x = col * (cardWidth + xGap);
         const y = row * (cardHeight + yGap);
 
+        const isInOutfit = !!outfit[item.ID];
+
         const card = document.createElement('div');
         card.className = 'card shadow-md';
+        if (isInOutfit) card.classList.add('selected');
         card.style.left = `${x}px`;
         card.style.top = `${y}px`;
-
-        const isInOutfit = outfit[item.ID];
-        if (isInOutfit) {
-          card.style.backgroundColor = 'lightblue';
-        }
 
         const img = document.createElement('img');
         img.src = `images/${item.photo}/1.jpg`;
@@ -195,15 +194,18 @@
 
         const buttons = document.createElement('div');
         buttons.className = 'flex justify-between mt-auto';
-        const outfitBtnText = isInOutfit ? '−' : '+';
-        const outfitBtnColor = isInOutfit ? 'bg-red-200' : 'bg-green-200';
 
-        buttons.innerHTML = `
-          <button class="${outfitBtnColor} px-3 py-1 rounded" onclick="toggleOutfitItem('${item.ID}', '${item.type}')">${outfitBtnText}</button>
-          <button onclick="toggleFavorite('${item.ID}')">
-            <span style="color: ${favorites.includes(item.ID) ? 'gold' : 'gray'}; font-size: 1.5rem;">★</span>
-          </button>
-        `;
+        const outfitBtn = document.createElement('button');
+        outfitBtn.className = 'bg-green-200 px-3 py-1 rounded';
+        outfitBtn.textContent = isInOutfit ? '−' : '+';
+        outfitBtn.onclick = () => handleOutfitToggle(item);
+
+        const favBtn = document.createElement('button');
+        favBtn.innerHTML = `<span style="color: ${favorites.includes(item.ID) ? 'gold' : 'gray'}; font-size: 1.5rem;">★</span>`;
+        favBtn.onclick = () => toggleFavorite(item.ID);
+
+        buttons.appendChild(outfitBtn);
+        buttons.appendChild(favBtn);
 
         details.appendChild(info);
         details.appendChild(buttons);
