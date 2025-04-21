@@ -40,9 +40,9 @@
       padding: 2rem;
       box-sizing: border-box;
       border-style: solid;
-      border-color: #F9FAFB; /* Same as background */
-      border-width: 25px; /* 1/8 of 200px card width = 25px */
-      background-color: #F9FAFB; /* Match background for seamless border */
+      border-color: #F9FAFB;
+      border-width: 25px;
+      background-color: #F9FAFB;
     }
   </style>
 </head>
@@ -79,6 +79,16 @@
     let closetData = [];
     let currentClosetTab = 'New';
     let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let outfit = JSON.parse(localStorage.getItem('outfit')) || {};
+
+    const MAX_ITEMS = {
+      "Accessory": 4,
+      "Hat": 1,
+      "Top": 1,
+      "Bottom": 1,
+      "Shoes": 1,
+      "Outerwear": 4
+    };
 
     function setMainTab(tab) {
       alert(`Main tab switched to: ${tab}`);
@@ -93,11 +103,7 @@
     function updateActiveTab() {
       const buttons = document.querySelectorAll('#closetTabs .tab-button');
       buttons.forEach(button => {
-        if (button.textContent === currentClosetTab) {
-          button.classList.add('active');
-        } else {
-          button.classList.remove('active');
-        }
+        button.classList.toggle('active', button.textContent === currentClosetTab);
       });
     }
 
@@ -109,6 +115,27 @@
         favorites.push(id);
       }
       localStorage.setItem('favorites', JSON.stringify(favorites));
+      renderCloset();
+    }
+
+    function toggleOutfitItem(id, typeStr) {
+      const item = closetData.find(i => i.ID === id);
+      const types = item.type.split(',').map(t => t.trim());
+
+      if (outfit[id]) {
+        delete outfit[id];
+      } else {
+        for (const type of types) {
+          const count = Object.values(outfit).filter(i => i.type.includes(type)).length;
+          if (count >= MAX_ITEMS[type]) {
+            alert(`No room for another ${type}.`);
+            return;
+          }
+        }
+        outfit[id] = item;
+      }
+
+      localStorage.setItem('outfit', JSON.stringify(outfit));
       renderCloset();
     }
 
@@ -143,6 +170,11 @@
         card.style.left = `${x}px`;
         card.style.top = `${y}px`;
 
+        const isInOutfit = outfit[item.ID];
+        if (isInOutfit) {
+          card.style.backgroundColor = 'lightblue';
+        }
+
         const img = document.createElement('img');
         img.src = `images/${item.photo}/1.jpg`;
         img.onerror = () => {
@@ -163,8 +195,11 @@
 
         const buttons = document.createElement('div');
         buttons.className = 'flex justify-between mt-auto';
+        const outfitBtnText = isInOutfit ? '−' : '+';
+        const outfitBtnColor = isInOutfit ? 'bg-red-200' : 'bg-green-200';
+
         buttons.innerHTML = `
-          <button class="bg-green-200 px-3 py-1 rounded">+</button>
+          <button class="${outfitBtnColor} px-3 py-1 rounded" onclick="toggleOutfitItem('${item.ID}', '${item.type}')">${outfitBtnText}</button>
           <button onclick="toggleFavorite('${item.ID}')">
             <span style="color: ${favorites.includes(item.ID) ? 'gold' : 'gray'}; font-size: 1.5rem;">★</span>
           </button>
