@@ -119,8 +119,8 @@
         filtered = closetData.filter(item => item.type.includes(currentClosetTab));
       }
 
-      const cardWidth = 300;
-      const cardHeight = 300;
+      const cardWidth = 200;
+      const cardHeight = 200;
       const xGap = cardWidth / 8;
       const yGap = cardHeight / 8;
       const containerWidth = container.offsetWidth;
@@ -138,7 +138,7 @@
         card.style.top = `${y}px`;
 
         const img = document.createElement('img');
-        img.src = `images/images/${item.photo}/1.jpg`;
+        img.src = `images/${item.photo}/1.jpg`;
         img.onerror = () => {
           img.onerror = null;
           img.src = `images/images/${item.photo}/1.png`;
